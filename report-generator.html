@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCF Partnership Proposal Generator</title>
+    <link rel="icon" href="images/tcf_logo.webp" type="image/webp">
+    <style>
+        :root {
+            --tcf-navy: #004766;
+            --tcf-navy-light: #005c82;
+            --tcf-navy-dark: #002233;
+            --tcf-olive: #709c59;
+            --tcf-moss: #a3b861;
+            --tcf-moss-pale: #F2F5E8;
+            --bg: #F4F6F8;
+            --surface: #FFFFFF;
+            --text: #1E293B;
+            --text-muted: #64748B;
+            --border: #E2E8F0;
+            --border-focus: #004766;
+            --danger: #DC2626;
+            --danger-bg: #FEF2F2;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
+            --radius: 10px;
+            --radius-sm: 6px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--tcf-navy) 0%, var(--tcf-navy-dark) 100%);
+            padding: 1.75rem 2rem;
+            text-align: center;
+            position: relative;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 0; right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--tcf-moss), var(--tcf-moss-light), var(--tcf-moss));
+        }
+        .header-logo {
+            width: 160px;
+            height: auto;
+            margin-bottom: 0.75rem;
+        }
+            letter-spacing: -0.5px;
+        }
+        .header h1 {
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 600;
+            letter-spacing: -0.3px;
+            margin: 0;
+        }
+        .header p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .form-body {
+            padding: 2rem 2rem 1.5rem;
+        }
+
+        .section {
+            margin-bottom: 1.75rem;
+            padding-bottom: 1.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .section:last-of-type { border-bottom: none; padding-bottom: 0; }
+
+        .section-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--tcf-navy);
+            margin-bottom: 1rem;
+        }
+        .section-label::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: var(--tcf-moss);
+        }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group:last-child { margin-bottom: 0; }
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.375rem;
+        }
+        .form-group label .required {
+            color: var(--danger);
+            margin-left: 2px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.625rem 0.75rem;
+            font-size: 0.9125rem;
+            font-family: inherit;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--surface);
+            color: var(--text);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        textarea:focus {
+            border-color: var(--tcf-navy);
+            box-shadow: 0 0 0 3px rgba(27,94,60,0.1);
+        }
+        input[type="text"]::placeholder,
+        textarea::placeholder {
+            color: #94A3B8;
+        }
+        input.invalid, textarea.invalid {
+            border-color: var(--danger);
+            background: var(--danger-bg);
+        }
+        .field-error {
+            font-size: 0.75rem;
+            color: var(--danger);
+            margin-top: 0.25rem;
+            display: none;
+        }
+        .field-error.visible { display: block; }
+
+        .radio-group {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .radio-card {
+            flex: 1;
+            min-width: 200px;
+        }
+        .radio-card input[type="radio"] { display: none; }
+        .radio-card label {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            font-size: 0.9125rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        .radio-card label:hover {
+            border-color: var(--tcf-navy);
+            background: #F0F7F3;
+        }
+        .radio-card input[type="radio"]:checked + label {
+            border-color: var(--tcf-navy);
+            background: #F0F7F3;
+            box-shadow: 0 0 0 3px rgba(27,94,60,0.1);
+        }
+        .radio-card label .radio-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .radio-card input[type="radio"]:checked + label .radio-dot {
+            border-color: var(--tcf-navy);
+        }
+        .radio-card input[type="radio"]:checked + label .radio-dot::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--tcf-navy);
+        }
+
+        .counts-row {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .counts-row .count-field {
+            flex: 1;
+            min-width: 110px;
+        }
+        .count-field label {
+            font-size: 0.7875rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+        .count-field input {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .calc-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            padding: 0.625rem 0.875rem;
+            background: var(--tcf-moss-pale);
+            border: 1px solid rgba(200,169,81,0.3);
+            border-radius: var(--radius-sm);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            color: var(--tcf-navy-dark);
+        }
+        .calc-badge .icon { font-size: 1rem; }
+
+        .sites-list { margin-bottom: 0.75rem; }
+
+        .site-row {
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            flex-wrap: wrap;
+        }
+        .site-row .site-name-field { flex: 2; min-width: 140px; }
+        .site-row .site-count-field { flex: 0 0 80px; min-width: 70px; }
+        .site-row .site-count-field input {
+            text-align: center;
+            font-weight: 500;
+        }
+        .site-row .site-count-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.2rem;
+        }
+        .btn-remove-site {
+            flex-shrink: 0;
+            width: 34px;
+            height: 34px;
+            border: 1.5px solid #FECACA;
+            border-radius: var(--radius-sm);
+            background: #FEF2F2;
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            align-self: flex-end;
+            margin-bottom: 1px;
+        }
+        .btn-remove-site:hover {
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: inherit;
+            border-radius: var(--radius-sm);
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            outline: none;
+            user-select: none;
+        }
+        .btn:active { transform: scale(0.98); }
+        .btn-outline {
+            background: transparent;
+            border-color: var(--tcf-navy);
+            color: var(--tcf-navy);
+        }
+        .btn-outline:hover {
+            background: #F0F7F3;
+        }
+        .btn-primary {
+            background: var(--tcf-navy);
+            color: #fff;
+            border-color: var(--tcf-navy);
+            box-shadow: 0 2px 8px rgba(27,94,60,0.25);
+        }
+        .btn-primary:hover {
+            background: var(--tcf-navy-light);
+            border-color: var(--tcf-navy-light);
+            box-shadow: 0 4px 14px rgba(27,94,60,0.3);
+        }
+        .btn-primary:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .guidance {
+            margin-top: 0.375rem;
+            padding: 0.75rem 0.875rem;
+            background: #F8FAFC;
+            border-left: 3px solid var(--tcf-moss);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            font-size: 0.7875rem;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        .guidance ol {
+            padding-left: 1.25rem;
+            margin: 0;
+        }
+        .guidance ol li { margin-bottom: 0.2rem; }
+        .guidance ol li strong { color: var(--text); }
+
+        .footer-bar {
+            background: #F8FAFC;
+            border-top: 1px solid var(--border);
+            padding: 1.25rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .footer-bar .btn-primary { padding: 0.75rem 2rem; font-size: 0.9375rem; }
+
+        .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+        .btn-primary.loading .spinner { display: inline-block; }
+        .btn-primary.loading .btn-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .toast {
+            position: fixed;
+            top: 1.25rem;
+            right: 1.25rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: #fff;
+            box-shadow: var(--shadow);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: var(--tcf-navy); }
+        .toast.error { background: var(--danger); }
+
+        @media (max-width: 600px) {
+            body { padding: 0; align-items: flex-start; }
+            .container { border-radius: 0; max-width: 100%; }
+            .header { padding: 1.25rem 1.25rem; }
+            .header h1 { font-size: 1.15rem; }
+            .form-body { padding: 1.25rem; }
+            .footer-bar { padding: 1rem 1.25rem; flex-direction: column; }
+            .footer-bar .btn-primary { width: 100%; }
+            .radio-group { flex-direction: column; }
+            .radio-card { min-width: 100%; }
+            .counts-row { flex-direction: column; }
+            .count-field { min-width: 100%; }
+            .site-row .site-name-field { flex: 1 1 100%; min-width: 100%; }
+            .site-row .site-count-field { flex: 1; min-width: 70px; }
+            .site-row .btn-remove-site { align-self: flex-end; }
+        }
+        /* Saved Reports panel */
+        .saved-panel-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 100; }
+        .saved-panel-overlay.open { display: block; }
+        .saved-panel {
+          position: fixed; top: 0; right: 0; bottom: 0; width: 380px; max-width: 100vw;
+          background: var(--surface); z-index: 101; box-shadow: -4px 0 24px rgba(0,0,0,0.12);
+          display: flex; flex-direction: column; transform: translateX(100%);
+          transition: transform 0.25s ease;
+        }
+        .saved-panel.open { transform: translateX(0); }
+        .saved-panel-header {
+          padding: 20px 24px; border-bottom: 1px solid var(--border);
+          display: flex; justify-content: space-between; align-items: center;
+        }
+        .saved-panel-header h3 { font-size: 16px; color: var(--tcf-navy); font-weight: 700; }
+        .saved-panel-close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--text-muted); }
+        .saved-panel-search { padding: 14px 24px; border-bottom: 1px solid var(--border); }
+        .saved-panel-search input { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
+        .saved-panel-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+        .saved-item {
+          padding: 14px 24px; border-bottom: 1px solid #f0f0f0; cursor: pointer;
+          transition: background 0.15s; display: flex; justify-content: space-between; align-items: center;
+        }
+        .saved-item:hover { background: var(--bg); }
+        .saved-item-info { flex: 1; }
+        .saved-item-name { font-size: 13px; font-weight: 600; color: var(--tcf-navy); margin-bottom: 3px; }
+        .saved-item-meta { font-size: 11px; color: var(--text-muted); }
+        .saved-item-delete {
+          background: none; border: none; color: #ccc; cursor: pointer; font-size: 16px; padding: 4px 8px;
+          border-radius: 4px; transition: color 0.15s;
+        }
+        .saved-item-delete:hover { color: var(--danger); }
+        .saved-panel-empty { text-align: center; padding: 40px; color: var(--text-muted); font-size: 13px; }
+        .btn-saved-toggle {
+          background: none; border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 14px;
+          border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 500; transition: background 0.15s;
+        }
+        .btn-saved-toggle:hover { background: rgba(255,255,255,0.1); }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
+
+        /* Attachment Manager */
+        .attach-dropzone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius-sm);
+            background: #FAFBFC;
+            transition: border-color 0.2s, background 0.2s;
+            cursor: pointer;
+        }
+        .attach-dropzone.dragover {
+            border-color: var(--tcf-moss);
+            background: rgba(163,184,97,0.06);
+        }
+        .attach-dropzone-inner {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .attach-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .attach-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            background: #F8FAFC;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            cursor: grab;
+            transition: box-shadow 0.15s, border-color 0.15s;
+            user-select: none;
+        }
+        .attach-item:active { cursor: grabbing; }
+        .attach-item.dragging {
+            opacity: 0.4;
+            border-color: var(--tcf-moss);
+        }
+        .attach-item.drag-over {
+            border-color: var(--tcf-navy);
+            box-shadow: 0 0 0 2px rgba(0,71,102,0.15);
+        }
+        .attach-item-handle {
+            color: #ccc;
+            font-size: 14px;
+            flex-shrink: 0;
+            cursor: grab;
+        }
+        .attach-item-thumb {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            object-fit: cover;
+            background: #E8E8E8;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            overflow: hidden;
+        }
+        .attach-item-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .attach-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .attach-item-name {
+            font-weight: 600;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .attach-item-size {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+        .attach-item-order {
+            background: var(--tcf-navy);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .attach-item-remove {
+            background: none;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: color 0.15s;
+            flex-shrink: 0;
+        }
+        .attach-item-remove:hover { color: var(--danger); }
+        .attach-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        @media (max-width: 600px) { .saved-panel { width: 100%; } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img class="header-logo" src="images/tcf-logo-reversed.png" alt="TCF" onerror="this.style.display='none'">
+            <h1>Partnership Proposal Generator</h1>
+            <p>Complete the form below to generate a branded PDF proposal</p>
+            <div class="header-actions" style="margin-top:12px;justify-content:center;">
+                <button type="button" class="btn-saved-toggle" onclick="toggleSavedPanel()">📂 Saved Reports</button>
+                <button type="button" class="btn-saved-toggle" onclick="saveCurrentReport()">💾 Save Current</button>
+            </div>
+        </div>
+
+        <form id="proposal-form" novalidate>
+            <div class="form-body">
+
+                <!-- Organisation Name -->
+                <div class="section">
+                    <div class="section-label">Organisation</div>
+                    <div class="form-group">
+                        <label for="org-name">Organisation Name <span class="required">*</span></label>
+                        <input type="text" id="org-name" name="orgName" placeholder="e.g. Aged Care Group Pty Ltd" required>
+                        <div class="field-error" id="error-org-name">Organisation name is required.</div>
+                    </div>
+                </div>
+
+                <!-- Site Mode -->
+                <div class="section">
+                    <div class="section-label">Site Configuration</div>
+                    <div class="radio-group">
+                        <div class="radio-card">
+                            <input type="radio" id="mode-single" name="siteMode" value="single" checked>
+                            <label for="mode-single">
+                                <span class="radio-dot"></span>
+                                Single facility (totals only)
+                            </label>
+                        </div>
+                        <div class="radio-card">
+                            <input type="radio" id="mode-multi" name="siteMode" value="multi">
+                            <label for="mode-multi">
+                                <span class="radio-dot"></span>
+                                Multiple sites
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Single Facility Panel -->
+                <div class="section" id="panel-single">
+                    <div class="section-label">Resident Texture Counts</div>
+                    <div class="counts-row">
+                        <div class="count-field">
+                            <label for="pu4-count">PU4 (Puree)</label>
+                            <input type="number" id="pu4-count" name="pu4" min="0" max="999" value="0">
+                        </div>
+                        <div class="count-field">
+                            <label for="mm5-count">MM5 (Minced &amp; Moist)</label>
+                            <input type="number" id="mm5-count" name="mm5" min="0" max="999" value="0">
+                        </div>
+                        <div class="count-field">
+                            <label for="sb6-count">SB6 (Soft &amp; Bite-Sized)</label>
+                            <input type="number" id="sb6-count" name="sb6" min="0" max="999" value="0">
+                        </div>
+                    </div>
+                    <div class="calc-badge" id="calc-single">
+                        <span class="icon">&#9632;</span>
+                        <span id="single-summary">0 texture-modified residents | ~0 plates/day</span>
+                    </div>
+                </div>
+
+                <!-- Multiple Sites Panel -->
+                <div class="section" id="panel-multi" style="display:none;">
+                    <div class="section-label">Site List</div>
+                    <div class="sites-list" id="sites-list"></div>
+                    <button type="button" class="btn btn-outline" id="btn-add-site" style="margin-bottom:0.75rem;">
+                        + Add Site
+                    </button>
+                    <div class="calc-badge" id="calc-multi" style="display:none;">
+                        <span class="icon">&#9632;</span>
+                        <span id="multi-summary">0 texture-modified residents across 0 sites | ~0 plates/day</span>
+                    </div>
+                </div>
+
+                <!-- Implementation Plan -->
+                <div class="section">
+                    <div class="section-label">Implementation Plan <span style="font-weight:400;text-transform:none;letter-spacing:0;">— AI-powered expansion</span></div>
+                    <div class="form-group">
+                        <label for="impl-plan">Briefly describe the rollout plan <span class="required">*</span></label>
+                        <textarea id="impl-plan" name="implPlan" rows="6"
+                            placeholder="e.g. We will start with on-site kitchen training, followed by a 5-day sample trial across all sites to gather resident feedback. After the review meeting, we transition to full supply with ongoing quarterly support."
+                            required></textarea>
+                        <div class="field-error" id="error-impl-plan">Implementation plan is required.</div>
+                    </div>
+                    <div class="guidance">
+                        <strong>AI will expand your brief input</strong> into a detailed step-by-step implementation graph for Section 5 of the report. Simply describe the rollout in 1–2 short paragraphs — milestones, timing, key activities. The AI handles the rest.
+                    </div>
+                </div>
+
+                <!-- Prepared By / Prepared For -->
+                <div class="section">
+                    <div class="section-label">Report Details</div>
+                    <div class="counts-row">
+                        <div class="count-field" style="flex:1; min-width:200px;">
+                            <label for="prepared-by">Prepared By</label>
+                            <input type="text" id="prepared-by" name="preparedBy" value="Tyler Agnew">
+                        </div>
+                        <div class="count-field" style="flex:1; min-width:200px;">
+                            <label for="prepared-for">Prepared For</label>
+                            <input type="text" id="prepared-for" name="preparedFor" placeholder="Auto-filled from Organisation Name">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Supplementary Materials -->
+                <div class="section">
+                    <div class="section-label">Supplementary Materials <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></div>
+                    <div class="form-group">
+                        <label for="supp-text">Additional documentation, notes, or attachments</label>
+                        <textarea id="supp-text" name="suppText" rows="5" placeholder="Paste any additional notes, pricing details, product lists, clinical notes, or other supporting information to include in the report. This will appear as a dedicated section before the final page."></textarea>
+                    </div>
+                    <div class="form-group" style="margin-top:8px;">
+                        <label>Attach images or documents</label>
+                        <div class="attach-dropzone" id="attach-dropzone">
+                            <input type="file" id="attach-input" multiple accept="image/*,.pdf" style="display:none;">
+                            <div class="attach-dropzone-inner" onclick="document.getElementById('attach-input').click()">
+                                <span style="font-size:24px;">📎</span>
+                                <span>Click to add files or drag &amp; drop here</span>
+                                <span style="font-size:11px;color:var(--text-muted);">Images (JPG, PNG, WebP) &amp; PDFs supported • Multiple files OK</span>
+                            </div>
+                        </div>
+                        <div class="attach-list" id="attach-list"></div>
+                        <div class="attach-hint" id="attach-hint" style="display:none;">
+                            <span>💡</span> Drag items to reorder. They will appear in this order in the report.
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-bar">
+                <div style="font-size:0.8rem; color:var(--text-muted);">
+                    Generates a branded PDF proposal
+                </div>
+                <button type="submit" class="btn btn-primary" id="btn-generate">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Generate Report</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    (function() {
+        // --- DOM refs ---
+        var form = document.getElementById('proposal-form');
+        var orgNameInput = document.getElementById('org-name');
+        var preparedForInput = document.getElementById('prepared-for');
+        var modeSingle = document.getElementById('mode-single');
+        var modeMulti = document.getElementById('mode-multi');
+        var panelSingle = document.getElementById('panel-single');
+        var panelMulti = document.getElementById('panel-multi');
+        var calcSingleBadge = document.getElementById('calc-single');
+        var calcMultiBadge = document.getElementById('calc-multi');
+        var singleSummaryEl = document.getElementById('single-summary');
+        var multiSummaryEl = document.getElementById('multi-summary');
+        var sitesList = document.getElementById('sites-list');
+        var btnAddSite = document.getElementById('btn-add-site');
+        var btnGenerate = document.getElementById('btn-generate');
+        var implPlanInput = document.getElementById('impl-plan');
+        var pu4Input = document.getElementById('pu4-count');
+        var mm5Input = document.getElementById('mm5-count');
+        var sb6Input = document.getElementById('sb6-count');
+        var toast = document.getElementById('toast');
+        var errorOrg = document.getElementById('error-org-name');
+        var errorImpl = document.getElementById('error-impl-plan');
+
+        var siteCounter = 0;
+
+        // --- Auto-fill Prepared For ---
+        orgNameInput.addEventListener('input', function() {
+            preparedForInput.value = orgNameInput.value;
+        });
+
+        // --- Toggle panels ---
+        function updatePanelVisibility() {
+            var isMulti = modeMulti.checked;
+            panelSingle.style.display = isMulti ? 'none' : '';
+            panelMulti.style.display = isMulti ? '' : 'none';
+            updateCalculations();
+        }
+        modeSingle.addEventListener('change', updatePanelVisibility);
+        modeMulti.addEventListener('change', updatePanelVisibility);
+
+        // --- Single facility calculations ---
+        [pu4Input, mm5Input, sb6Input].forEach(function(inp) {
+            inp.addEventListener('input', updateCalculations);
+        });
+
+        function updateCalculations() {
+            if (modeSingle.checked) {
+                var pu4 = parseInt(pu4Input.value) || 0;
+                var mm5 = parseInt(mm5Input.value) || 0;
+                var sb6 = parseInt(sb6Input.value) || 0;
+                var total = pu4 + mm5 + sb6;
+                var platesPerDay = total * 2; // lunch + dinner
+                singleSummaryEl.textContent = total + ' texture-modified resident' + (total !== 1 ? 's' : '') +
+                    ' | ~' + platesPerDay + ' plates/day';
+                calcSingleBadge.style.display = total > 0 ? '' : 'none';
+            } else {
+                updateMultiCalculations();
+            }
+        }
+
+        // --- Multi-site ---
+        function updateMultiCalculations() {
+            var totalResidents = 0;
+            var siteCount = 0;
+            var rows = sitesList.querySelectorAll('.site-row');
+            rows.forEach(function(row) {
+                var nameVal = (row.querySelector('.site-name') || {}).value || '';
+                if (nameVal.trim()) siteCount++;
+                totalResidents += parseInt(row.querySelector('.site-pu4').value) || 0;
+                totalResidents += parseInt(row.querySelector('.site-mm5').value) || 0;
+                totalResidents += parseInt(row.querySelector('.site-sb6').value) || 0;
+            });
+            var platesPerDay = totalResidents * 2;
+            multiSummaryEl.textContent = totalResidents + ' total texture-modified residents across ' +
+                siteCount + ' site' + (siteCount !== 1 ? 's' : '') +
+                ' | ~' + platesPerDay + ' plates/day';
+            calcMultiBadge.style.display = siteCount > 0 || totalResidents > 0 ? '' : 'none';
+        }
+
+        function createSiteRow() {
+            siteCounter++;
+            var row = document.createElement('div');
+            row.className = 'site-row';
+            row.dataset.siteId = siteCounter;
+            row.innerHTML =
+                '<div class="site-name-field">' +
+                    '<div class="site-count-label">Site Name</div>' +
+                    '<input type="text" class="site-name" placeholder="e.g. Sunnydale Aged Care">' +
+                '</div>' +
+                '<div class="site-count-field">' +
+                    '<div class="site-count-label">PU4</div>' +
+                    '<input type="number" class="site-pu4" min="0" max="999" value="0">' +
+                '</div>' +
+                '<div class="site-count-field">' +
+                    '<div class="site-count-label">MM5</div>' +
+                    '<input type="number" class="site-mm5" min="0" max="999" value="0">' +
+                '</div>' +
+                '<div class="site-count-field">' +
+                    '<div class="site-count-label">SB6</div>' +
+                    '<input type="number" class="site-sb6" min="0" max="999" value="0">' +
+                '</div>' +
+                '<button type="button" class="btn-remove-site" title="Remove site">&times;</button>';
+
+            var removeBtn = row.querySelector('.btn-remove-site');
+            removeBtn.addEventListener('click', function() {
+                row.remove();
+                siteCounter--;
+                updateAddButtonState();
+                updateMultiCalculations();
+            });
+
+            row.querySelectorAll('input').forEach(function(inp) {
+                inp.addEventListener('input', updateMultiCalculations);
+            });
+
+            sitesList.appendChild(row);
+            updateAddButtonState();
+            updateMultiCalculations();
+            return row;
+        }
+
+        function updateAddButtonState() {
+            btnAddSite.disabled = false;
+            btnAddSite.textContent = '+ Add Site';
+        }
+
+        btnAddSite.addEventListener('click', createSiteRow);
+
+        // --- Validation ---
+        function clearErrors() {
+            [orgNameInput, implPlanInput].forEach(function(el) { el.classList.remove('invalid'); });
+            errorOrg.classList.remove('visible');
+            errorImpl.classList.remove('visible');
+        }
+
+        function validate() {
+            clearErrors();
+            var valid = true;
+
+            if (!orgNameInput.value.trim()) {
+                orgNameInput.classList.add('invalid');
+                errorOrg.classList.add('visible');
+                valid = false;
+            }
+            if (!implPlanInput.value.trim()) {
+                implPlanInput.classList.add('invalid');
+                errorImpl.classList.add('visible');
+                valid = false;
+            }
+            return valid;
+        }
+
+        // --- Toast ---
+        var toastTimer;
+        function showToast(message, type) {
+            clearTimeout(toastTimer);
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            toastTimer = setTimeout(function() {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // --- Build payload ---
+        function buildPayload() {
+            var payload = {
+                orgName: orgNameInput.value.trim(),
+                siteMode: modeMulti.checked ? 'multi' : 'single',
+                planText: implPlanInput.value.trim(),
+                preparedBy: document.getElementById('prepared-by').value.trim() || 'Tyler Agnew',
+                preparedFor: preparedForInput.value.trim() || orgNameInput.value.trim(),
+                suppText: document.getElementById('supp-text').value.trim(),
+                attachments: window._attachments || []
+            };
+
+            if (payload.siteMode === 'single') {
+                payload.single = {
+                    pu4: parseInt(pu4Input.value) || 0,
+                    mm5: parseInt(mm5Input.value) || 0,
+                    sb6: parseInt(sb6Input.value) || 0
+                };
+            } else {
+                payload.sites = [];
+                var rows = sitesList.querySelectorAll('.site-row');
+                rows.forEach(function(row) {
+                    var name = (row.querySelector('.site-name') || {}).value || '';
+                    if (name.trim()) {
+                        payload.sites.push({
+                            name: name.trim(),
+                            pu4: parseInt(row.querySelector('.site-pu4').value) || 0,
+                            mm5: parseInt(row.querySelector('.site-mm5').value) || 0,
+                            sb6: parseInt(row.querySelector('.site-sb6').value) || 0
+                        });
+                    }
+                });
+                payload.totalResidents = payload.sites.reduce(function(acc, s) {
+                    return acc + s.pu4 + s.mm5 + s.sb6;
+                }, 0);
+            }
+
+            return payload;
+        }
+
+        // --- Submit ---
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (!validate()) return;
+
+            var payload = buildPayload();
+
+            // Additional multi-site check
+            if (payload.siteMode === 'multi' && (!payload.sites || payload.sites.length === 0)) {
+                showToast('Please add at least one site.', 'error');
+                return;
+            }
+
+            btnGenerate.classList.add('loading');
+            btnGenerate.disabled = true;
+
+            // Encode payload as base64 and open report renderer
+            var json = JSON.stringify(payload);
+            var encoded = btoa(unescape(encodeURIComponent(json)));
+            var renderUrl = 'report-render.html#' + encoded;
+            window.open(renderUrl, '_blank');
+
+            btnGenerate.classList.remove('loading');
+            btnGenerate.disabled = false;
+            showToast('Report opening in new tab — press Ctrl+P to save as PDF.', 'success');
+
+            // Auto-save
+            saveCurrentReport();
+        });
+
+        // --- Init ---
+        updatePanelVisibility();
+        updateCalculations();
+
+        // --- Attachment Manager ---
+        window._attachments = [];
+        var attachInput = document.getElementById('attach-input');
+        var attachList = document.getElementById('attach-list');
+        var attachDropzone = document.getElementById('attach-dropzone');
+        var attachHint = document.getElementById('attach-hint');
+        var dragSrcIdx = null;
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / 1048576).toFixed(1) + ' MB';
+        }
+
+        function processFile(file) {
+            return new Promise(function(resolve) {
+                var isImage = file.type.startsWith('image/');
+                var isPDF = file.type === 'application/pdf';
+                if (!isImage && !isPDF) {
+                    showToast('Unsupported file type: ' + file.name, 'error');
+                    resolve(null);
+                    return;
+                }
+                // Size limit: 5MB per file
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast('File too large (max 5MB): ' + file.name, 'error');
+                    resolve(null);
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    resolve({
+                        name: file.name,
+                        type: isImage ? 'image' : 'pdf',
+                        size: file.size,
+                        data: e.target.result
+                    });
+                };
+                reader.onerror = function() {
+                    showToast('Failed to read: ' + file.name, 'error');
+                    resolve(null);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleFiles(files) {
+            for (var i = 0; i < files.length; i++) {
+                var result = await processFile(files[i]);
+                if (result) {
+                    window._attachments.push(result);
+                }
+            }
+            renderAttachList();
+            if (window._attachments.length > 0) {
+                showToast(window._attachments.length + ' attachment(s) ready', 'success');
+            }
+        }
+
+        function renderAttachList() {
+            attachHint.style.display = window._attachments.length > 1 ? '' : 'none';
+            if (window._attachments.length === 0) {
+                attachList.innerHTML = '';
+                return;
+            }
+            attachList.innerHTML = window._attachments.map(function(att, idx) {
+                var thumbContent = att.type === 'image'
+                    ? '<img src="' + att.data + '" alt="">'
+                    : '📄';
+                return '<div class="attach-item" draggable="true" data-idx="' + idx + '">' +
+                    '<span class="attach-item-handle">⠿</span>' +
+                    '<span class="attach-item-order">' + (idx + 1) + '</span>' +
+                    '<div class="attach-item-thumb">' + thumbContent + '</div>' +
+                    '<div class="attach-item-info">' +
+                        '<div class="attach-item-name">' + escHTML(att.name) + '</div>' +
+                        '<div class="attach-item-size">' + att.type.toUpperCase() + ' • ' + formatFileSize(att.size) + '</div>' +
+                    '</div>' +
+                    '<button type="button" class="attach-item-remove" onclick="removeAttachment(' + idx + ')" title="Remove">×</button>' +
+                '</div>';
+            }).join('');
+
+            // Add drag listeners to items
+            var items = attachList.querySelectorAll('.attach-item');
+            items.forEach(function(item) {
+                item.addEventListener('dragstart', function(e) {
+                    dragSrcIdx = parseInt(item.getAttribute('data-idx'));
+                    item.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                item.addEventListener('dragend', function() {
+                    item.classList.remove('dragging');
+                    dragSrcIdx = null;
+                    attachList.querySelectorAll('.attach-item').forEach(function(el) {
+                        el.classList.remove('drag-over');
+                    });
+                });
+                item.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    item.classList.add('drag-over');
+                });
+                item.addEventListener('dragleave', function() {
+                    item.classList.remove('drag-over');
+                });
+                item.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    var targetIdx = parseInt(item.getAttribute('data-idx'));
+                    if (dragSrcIdx !== null && dragSrcIdx !== targetIdx) {
+                        var moved = window._attachments.splice(dragSrcIdx, 1)[0];
+                        window._attachments.splice(targetIdx, 0, moved);
+                        renderAttachList();
+                    }
+                });
+            });
+        }
+
+        function removeAttachment(idx) {
+            window._attachments.splice(idx, 1);
+            renderAttachList();
+        }
+
+        // File input change
+        attachInput.addEventListener('change', function() {
+            if (attachInput.files.length > 0) {
+                handleFiles(attachInput.files);
+                attachInput.value = '';
+            }
+        });
+
+        // Drag & drop on dropzone
+        attachDropzone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            attachDropzone.classList.add('dragover');
+        });
+        attachDropzone.addEventListener('dragleave', function() {
+            attachDropzone.classList.remove('dragover');
+        });
+        attachDropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            attachDropzone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFiles(e.dataTransfer.files);
+            }
+        });
+
+        // --- Saved Reports ---
+        function getSavedReports() {
+            try { return JSON.parse(localStorage.getItem('tcf_saved_reports') || '[]'); } catch(e) { return []; }
+        }
+        function saveReportsToStorage(reports) {
+            localStorage.setItem('tcf_saved_reports', JSON.stringify(reports));
+        }
+
+        function saveCurrentReport() {
+            var payload = buildPayload();
+            if (!payload.orgName) { showToast('Enter an organisation name first.', 'error'); return; }
+            var reports = getSavedReports();
+            var reportId = Date.now().toString();
+            var existing = -1;
+            var originalDate = null;
+            for (var i = 0; i < reports.length; i++) {
+                if (reports[i].name === payload.orgName) { reportId = reports[i].id; existing = i; originalDate = reports[i].date; break; }
+            }
+            var now = new Date();
+            var timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            var report = {
+                id: reportId,
+                name: payload.orgName,
+                preparedFor: payload.preparedFor || payload.orgName,
+                siteMode: payload.siteMode,
+                siteCount: payload.siteMode === 'multi' ? (payload.sites || []).length : 1,
+                date: originalDate || now.toISOString().split('T')[0],
+                updated: now.toISOString(),
+                data: payload
+            };
+            if (existing >= 0) reports[existing] = report;
+            else reports.unshift(report);
+            saveReportsToStorage(reports);
+            showToast('Saved: ' + report.name + ' at ' + timeStr, 'success');
+        }
+
+        function toggleSavedPanel() {
+            var overlay = document.getElementById('saved-overlay');
+            var panel = document.getElementById('saved-panel');
+            overlay.classList.toggle('open');
+            panel.classList.toggle('open');
+            if (overlay.classList.contains('open')) renderSavedList('');
+        }
+
+        function formatRelativeTime(isoStr) {
+            if (!isoStr) return '';
+            var diff = Date.now() - new Date(isoStr).getTime();
+            var mins = Math.floor(diff / 60000);
+            if (mins < 1) return 'just now';
+            if (mins < 60) return mins + ' min ago';
+            var hours = Math.floor(mins / 60);
+            if (hours < 24) return hours + 'h ago';
+            var days = Math.floor(hours / 24);
+            if (days < 7) return days + 'd ago';
+            return new Date(isoStr).toLocaleDateString();
+        }
+
+        function renderSavedList(filter) {
+            var list = document.getElementById('saved-list');
+            var reports = getSavedReports();
+            if (filter) {
+                var q = filter.toLowerCase();
+                reports = reports.filter(function(r) { return r.name.toLowerCase().indexOf(q) !== -1 || (r.preparedFor && r.preparedFor.toLowerCase().indexOf(q) !== -1); });
+            }
+            if (reports.length === 0) {
+                list.innerHTML = '<div class="saved-panel-empty">No saved reports found.</div>';
+                return;
+            }
+            list.innerHTML = reports.map(function(r) {
+                var forLine = (r.preparedFor && r.preparedFor !== r.name) ? ' &bull; For: ' + escHTML(r.preparedFor) : '';
+                var updatedLine = r.updated ? ' &bull; Updated ' + formatRelativeTime(r.updated) : '';
+                return '<div class="saved-item" onclick="loadSavedReport(\'' + r.id + '\')">' +
+                  '<div class="saved-item-info">' +
+                    '<div class="saved-item-name">' + escHTML(r.name) + '</div>' +
+                    '<div class="saved-item-meta">' + r.siteCount + ' site(s)' + forLine + updatedLine + '</div>' +
+                  '</div>' +
+                  '<button class="saved-item-delete" onclick="event.stopPropagation();deleteSavedReport(\'' + r.id + '\')" title="Delete">\u00d7</button>' +
+                '</div>';
+            }).join('');
+        }
+
+        function loadSavedReport(id) {
+            var reports = getSavedReports();
+            var found = reports.find(function(r) { return r.id === id; });
+            if (!found) return;
+            var d = found.data;
+            document.getElementById('org-name').value = d.orgName || '';
+            document.getElementById('prepared-for').value = d.preparedFor || d.orgName || '';
+            document.getElementById('prepared-by').value = d.preparedBy || 'Tyler Agnew';
+            document.getElementById('impl-plan').value = d.planText || '';
+            document.getElementById('supp-text').value = d.suppText || '';
+            // Restore attachments
+            window._attachments = d.attachments || [];
+            renderAttachList();
+            if (d.siteMode === 'multi') {
+                document.getElementById('mode-multi').checked = true;
+            } else {
+                document.getElementById('mode-single').checked = true;
+            }
+            updatePanelVisibility();
+            if (d.siteMode === 'single' && d.single) {
+                document.getElementById('pu4-count').value = d.single.pu4 || 0;
+                document.getElementById('mm5-count').value = d.single.mm5 || 0;
+                document.getElementById('sb6-count').value = d.single.sb6 || 0;
+            }
+            if (d.siteMode === 'multi' && d.sites) {
+                document.getElementById('sites-list').innerHTML = '';
+                d.sites.forEach(function(s) {
+                    var row = createSiteRow();
+                    var inputs = row.querySelectorAll('input');
+                    inputs[0].value = s.name || '';
+                    inputs[1].value = s.pu4 || 0;
+                    inputs[2].value = s.mm5 || 0;
+                    inputs[3].value = s.sb6 || 0;
+                });
+            }
+            updateCalculations();
+            toggleSavedPanel();
+            showToast('Loaded: ' + found.name, 'success');
+        }
+
+        function deleteSavedReport(id) {
+            if (!confirm('Delete this saved report?')) return;
+            var reports = getSavedReports().filter(function(r) { return r.id !== id; });
+            saveReportsToStorage(reports);
+            var filter = document.getElementById('saved-search').value;
+            renderSavedList(filter);
+        }
+
+        function escHTML(str) {
+            if (!str) return '';
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        // Expose to global scope for onclick handlers
+        window.saveCurrentReport = saveCurrentReport;
+        window.toggleSavedPanel = toggleSavedPanel;
+        window.loadSavedReport = loadSavedReport;
+        window.deleteSavedReport = deleteSavedReport;
+        window.renderSavedList = renderSavedList;
+        window.removeAttachment = removeAttachment;
+    })();
+    </script>
+
+    <!-- Saved Reports Panel -->
+    <div class="saved-panel-overlay" id="saved-overlay" onclick="toggleSavedPanel()"></div>
+    <div class="saved-panel" id="saved-panel">
+        <div class="saved-panel-header">
+            <h3>📂 Saved Reports</h3>
+            <button class="saved-panel-close" onclick="toggleSavedPanel()">&times;</button>
+        </div>
+        <div class="saved-panel-search">
+            <input type="text" id="saved-search" placeholder="Search by name..." oninput="renderSavedList(this.value)">
+        </div>
+        <div class="saved-panel-list" id="saved-list">
+            <div class="saved-panel-empty">No saved reports found.</div>
+        </div>
+    </div>
+</body>
+</html>

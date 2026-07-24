@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TCF — Partnership Proposal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  @page { size: A4; margin: 0; }
+
+  :root {
+    --tcf-navy: #004766;
+    --tcf-olive: #709c59;
+    --tcf-moss: #a3b861;
+    --tcf-light: #EFF3EB;
+    --tcf-cream: #F8F6F0;
+    --tcf-dark: #002233;
+    --tcf-slate: #3D4A44;
+    --tcf-warm-bg: #F2F0E8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+    color: #2A2A2A;
+    background: white;
+    line-height: 1.42;
+    font-weight: 400;
+  }
+
+  .page { width: 100%; background: white; }
+
+  #report-container { max-width: 794px; margin: 0 auto; }
+
+  /* Watermark logo on content pages */
+  .section {
+    padding: 14px 34px;
+    border-bottom: 1px solid #E8E6DE;
+    width: 210mm;
+    margin: 0 auto;
+    page-break-inside: avoid;
+    position: relative;
+  }
+  .section::after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    right: 30px;
+    width: 70px;
+    height: 70px;
+    background: url('images/tcf-logo-reversed.png') center/contain no-repeat;
+    opacity: 0.16;
+    pointer-events: none;
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header { margin-bottom: 8px; }
+  .section-number {
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--tcf-moss);
+    margin-bottom: 2px;
+  }
+  .section-header h2 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--tcf-navy);
+    letter-spacing: -0.3px;
+  }
+  .section-header p {
+    font-size: 11px;
+    color: var(--tcf-slate);
+    margin-top: 2px;
+    max-width: 650px;
+    font-weight: 400;
+  }
+
+  /* ===== COVER ===== */
+  .cover {
+    background: linear-gradient(135deg, var(--tcf-navy) 0%, #001a2e 100%);
+    color: white;
+    padding: 36px 44px 24px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    page-break-after: always;
+  }
+  .cover::before {
+    content: '';
+    position: absolute;
+    top: -45%; right: -18%;
+    width: 520px; height: 520px;
+    border-radius: 50%;
+    background: rgba(163,184,97,0.06);
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    bottom: -30%; left: -10%;
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: rgba(112,156,89,0.04);
+  }
+  .cover-logo-main {
+    width: 260px;
+    height: auto;
+    position: relative;
+    z-index: 1;
+    margin-bottom: 20px;
+  }
+  .cover-body { position: relative; z-index: 1; display: flex; flex-direction: column; margin-bottom: 28px; }
+  .cover-badge {
+    display: inline-block;
+    background: rgba(163,184,97,0.18);
+    border: 1px solid var(--tcf-moss);
+    color: var(--tcf-moss);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    padding: 5px 16px;
+    border-radius: 4px;
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 14px;
+    line-height: 1.1;
+  }
+  .cover .subtitle {
+    font-size: 18px;
+    font-weight: 300;
+    opacity: 0.9;
+    max-width: 540px;
+  }
+  .cover .date-line {
+    margin-top: 36px;
+    font-size: 12px;
+    font-weight: 500;
+    opacity: 0.6;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  .cover-strips-heading {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--tcf-moss);
+    margin-bottom: 12px;
+    opacity: 0.9;
+  }
+  .cover-strips {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .cover-strip {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cover-strip .cs-icon { font-size: 22px; flex-shrink: 0; opacity: 0.85; }
+  .cover-strip h4 {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--tcf-moss);
+    margin-bottom: 3px;
+  }
+  .cover-strip p {
+    font-size: 10px;
+    opacity: 0.75;
+    line-height: 1.4;
+  }
+
+  /* ===== SITE CARDS ===== */
+  .site-cards {
+    display: grid;
+    gap: 12px;
+  }
+  .site-card {
+    background: white;
+    border: 1px solid #E5E5DE;
+    border-radius: 7px;
+    overflow: hidden;
+    break-inside: avoid;
+  }
+  .site-card-header {
+    background: var(--tcf-navy);
+    color: white;
+    padding: 10px 16px;
+    text-align: center;
+  }
+  .site-card-header h4 { font-size: 13px; font-weight: 700; }
+  .site-card-header .site-total {
+    font-size: 10px;
+    font-weight: 300;
+    opacity: 0.8;
+    margin-top: 1px;
+  }
+  .site-card-body { padding: 10px 16px; }
+  .texture-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #F0F0EB;
+  }
+  .texture-row:last-child { border-bottom: none; }
+  .texture-label { font-size: 10px; font-weight: 500; color: var(--tcf-slate); }
+  .texture-count { font-size: 15px; font-weight: 900; color: var(--tcf-navy); }
+  .texture-bar { height: 3px; border-radius: 2px; margin-top: 1px; }
+  .bar-pu4 { background: linear-gradient(90deg, var(--tcf-moss), #c4d17a); }
+  .bar-mm5 { background: linear-gradient(90deg, var(--tcf-olive), #8ab572); }
+  .bar-sb6 { background: linear-gradient(90deg, var(--tcf-navy), #1a6080); }
+  .plate-total {
+    margin-top: 7px;
+    background: #F7F5ED;
+    border: 1px solid #E8E2C8;
+    border-radius: 4px;
+    padding: 4px 8px;
+    text-align: center;
+    font-size: 9.5px;
+    color: #6B6914;
+    font-weight: 500;
+  }
+
+  /* ===== GROUP TOTAL ===== */
+  .group-total {
+    background: linear-gradient(135deg, var(--tcf-navy), #002840);
+    color: white;
+    border-radius: 7px;
+    padding: 14px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 14px;
+    page-break-inside: avoid;
+  }
+  .group-total h3 { font-size: 12px; font-weight: 500; opacity: 0.9; }
+  .group-total .big-number { font-size: 30px; font-weight: 900; letter-spacing: -1px; color: var(--tcf-moss); }
+
+  /* ===== BENEFIT CARDS ===== */
+  .benefit-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  .benefit-card {
+    background: white;
+    border: 1px solid #E5E5DE;
+    border-radius: 6px;
+    padding: 10px 12px;
+    page-break-inside: avoid;
+  }
+  .benefit-card .benefit-icon {
+    width: 26px; height: 26px;
+    background: var(--tcf-light);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+  .benefit-card h4 {
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--tcf-navy);
+    margin-bottom: 3px;
+  }
+  .benefit-card p {
+    font-size: 9.8px;
+    color: var(--tcf-slate);
+    line-height: 1.35;
+    font-weight: 400;
+  }
+
+  /* ===== DR LISA ===== */
+  .persona-card {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    background: var(--tcf-light);
+    border-radius: 7px;
+    padding: 16px 20px;
+    border: 1px solid #D4DED0;
+    page-break-inside: avoid;
+  }
+  .persona-avatar {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    background: var(--tcf-navy);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+  .persona-info h3 { font-size: 15px; font-weight: 700; color: var(--tcf-navy); margin-bottom: 1px; }
+  .persona-info .role {
+    font-size: 10.5px;
+    color: var(--tcf-olive);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .persona-info p { font-size: 10.5px; color: var(--tcf-slate); line-height: 1.4; font-weight: 400; }
+  .persona-info .credentials { display: flex; gap: 7px; margin-top: 6px; flex-wrap: wrap; }
+  .persona-info .cred-badge {
+    background: white;
+    border: 1px solid var(--tcf-navy);
+    color: var(--tcf-navy);
+    padding: 2px 7px;
+    border-radius: 11px;
+    font-size: 9.5px;
+    font-weight: 500;
+  }
+
+  /* ===== PRICING ===== */
+  .pricing-philosophy {
+    background: linear-gradient(135deg, #F8F6F0 0%, #FDFCF8 100%);
+    border: 1px solid #E8E2C8;
+    border-radius: 7px;
+    padding: 16px 20px;
+    margin-bottom: 10px;
+    page-break-inside: avoid;
+  }
+  .pricing-philosophy .quote {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--tcf-navy);
+    font-style: italic;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .pricing-philosophy p { font-size: 10.5px; color: var(--tcf-slate); line-height: 1.4; font-weight: 400; }
+
+  .value-props { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .value-prop { text-align: center; padding: 12px; }
+  .value-prop .vp-icon { font-size: 20px; margin-bottom: 4px; }
+  .value-prop h4 {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--tcf-navy);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 2px;
+  }
+  .value-prop p { font-size: 9.5px; color: var(--tcf-slate); font-weight: 400; }
+
+  /* ===== STEP-BY-STEP GRAPH ===== */
+  .steps-graph {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .step-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    position: relative;
+    padding-bottom: 12px;
+    break-inside: avoid;
+  }
+  .step-card:last-child { padding-bottom: 0; }
+  .step-card:last-child .step-line { display: none; }
+  .step-number {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--tcf-navy);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 900;
+    z-index: 2;
+  }
+  .step-content {
+    flex: 1;
+    background: var(--tcf-light);
+    border-radius: 6px;
+    padding: 8px 12px;
+    border: 1px solid #D4DED0;
+    position: relative;
+  }
+  .step-content h4 {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--tcf-navy);
+    margin-bottom: 1px;
+  }
+  .step-timeframe {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--tcf-olive);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 5px;
+  }
+  .step-actions {
+    margin: 0;
+    padding-left: 14px;
+    list-style: none;
+  }
+  .step-actions li {
+    font-size: 9.8px;
+    color: var(--tcf-slate);
+    line-height: 1.4;
+    position: relative;
+    padding: 1px 0;
+    font-weight: 400;
+  }
+  .step-actions li::before {
+    content: '';
+    position: absolute;
+    left: -11px;
+    top: 6px;
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--tcf-moss);
+  }
+  .step-deliverable {
+    margin-top: 5px;
+    font-size: 9px;
+    color: var(--tcf-navy);
+    background: rgba(163,184,97,0.12);
+    border-radius: 3px;
+    padding: 3px 8px;
+    border-left: 2px solid var(--tcf-moss);
+  }
+  .step-line {
+    position: absolute;
+    left: 14px;
+    top: 30px;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--tcf-olive), var(--tcf-light));
+    z-index: 1;
+  }
+  .phase-section { margin-bottom: 10px; }
+  .phase-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+  }
+  .completed-label { color: var(--tcf-olive); border-bottom: 1px solid var(--tcf-olive); }
+  .pending-label { color: var(--tcf-navy); border-bottom: 1px solid var(--tcf-navy); }
+  .step-card.completed .step-content {
+    background: rgba(112,156,89,0.07);
+    border-color: rgba(112,156,89,0.2);
+  }
+  .step-number.done { background: var(--tcf-olive); }
+  .step-card.completed .step-line {
+    background: linear-gradient(to bottom, var(--tcf-olive), var(--tcf-light));
+  }
+  .timeline {
+    position: relative;
+    padding-left: 22px;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 10px; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--tcf-light);
+  }
+  .timeline-item { position: relative; margin-bottom: 10px; }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -17px; top: 2px;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--tcf-moss);
+    border: 2px solid white;
+    box-shadow: 0 0 0 2px var(--tcf-moss);
+  }
+  .timeline-item h4 { font-size: 11px; font-weight: 700; color: var(--tcf-navy); margin-bottom: 2px; }
+  .timeline-item p { font-size: 10px; color: var(--tcf-slate); line-height: 1.4; font-weight: 400; }
+
+  /* ===== NEXT STEPS PAGE ===== */
+  .next-steps-page {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    background: linear-gradient(135deg, var(--tcf-navy) 0%, #001a2e 100%);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 48px 48px 60px;
+    position: relative;
+    overflow: hidden;
+    page-break-before: always;
+  }
+  .next-steps-page::before {
+    content: '';
+    position: absolute;
+    top: -40%; right: -20%;
+    width: 400px; height: 400px;
+    border-radius: 50%;
+    background: rgba(163,184,97,0.04);
+  }
+  .next-steps-page .ns-logo {
+    width: 140px;
+    opacity: 0.8;
+    margin-bottom: 36px;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page h2 {
+    font-size: 36px;
+    font-weight: 900;
+    margin-bottom: 16px;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page .ns-divider {
+    width: 60px;
+    height: 3px;
+    background: var(--tcf-moss);
+    margin: 0 auto 20px;
+    border-radius: 2px;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page p {
+    font-size: 15px;
+    font-weight: 300;
+    opacity: 0.85;
+    line-height: 1.6;
+    max-width: 520px;
+    margin: 0 auto 28px;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page .ns-contact {
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page .ns-contact-item {
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0.8;
+  }
+  .next-steps-page .ns-attribution {
+    margin-top: 28px;
+    font-size: 12px;
+    font-weight: 300;
+    opacity: 0.55;
+    position: relative;
+    z-index: 1;
+  }
+  .next-steps-page .ns-footer {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 9.5px;
+    font-weight: 300;
+    opacity: 0.4;
+    z-index: 1;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== PRINT BUTTON OVERLAY ===== */
+  #print-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: var(--tcf-navy);
+    color: white;
+    text-align: center;
+    padding: 12px;
+    z-index: 99999;
+    font-family: 'Roboto', 'Segoe UI', system-ui, sans-serif;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+  }
+  #print-overlay .print-btn {
+    display: inline-block;
+    background: var(--tcf-moss);
+    color: var(--tcf-navy);
+    border: none;
+    padding: 8px 24px;
+    font-size: 14px;
+    font-weight: 700;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+  #print-overlay .print-btn:hover {
+    background: #bdd47a;
+  }
+  #print-overlay .print-status {
+    display: inline-block;
+    margin-left: 16px;
+    font-size: 11px;
+    opacity: 0.7;
+  }
+
+  /* ===== SUPPLEMENTARY MATERIALS ===== */
+  .supp-section-content {
+    background: #FAFAF7;
+    border: 1px solid #E8E6DE;
+    border-radius: 6px;
+    padding: 14px 18px;
+    font-size: 10.5px;
+    line-height: 1.55;
+    color: var(--tcf-slate);
+    white-space: pre-wrap;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
+  .supp-attachment {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    padding: 24px 34px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    page-break-before: always;
+    page-break-after: always;
+    page-break-inside: avoid;
+    position: relative;
+  }
+  .supp-attachment img {
+    max-width: 100%;
+    max-height: calc(297mm - 80px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 5px;
+    border: 1px solid #E8E6DE;
+    display: block;
+  }
+  .supp-attachment-label {
+    font-size: 10px;
+    color: var(--tcf-slate);
+    text-align: center;
+    margin-top: 10px;
+    font-weight: 400;
+    opacity: 0.7;
+  }
+  .supp-attachment-watermark {
+    position: absolute;
+    top: 14px;
+    right: 34px;
+    width: 70px;
+    height: 70px;
+    background: url('images/tcf-logo-reversed.png') center/contain no-repeat;
+    opacity: 0.08;
+    pointer-events: none;
+  }
+  .supp-pdf-placeholder {
+    width: 210mm;
+    height: 297mm;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #FAFAF7;
+    border: 1px solid #E8E6DE;
+    page-break-before: always;
+    page-break-after: always;
+    page-break-inside: avoid;
+  }
+
+  /* ===== FOLLOW-UP CALLOUT ===== */
+  .followup-callout {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #F8F6F0;
+    border: 1px solid #E8E2C8;
+    border-left: 3px solid var(--tcf-moss);
+    border-radius: 0 6px 6px 0;
+    font-size: 10px;
+    color: var(--tcf-slate);
+    line-height: 1.45;
+    page-break-inside: avoid;
+  }
+  .followup-callout strong {
+    color: var(--tcf-navy);
+    font-weight: 700;
+  }
+
+  @media print {
+    #print-overlay { display: none !important; }
+    .cover { page-break-after: always !important; }
+    .section { page-break-inside: avoid; }
+    .site-card { break-inside: avoid; }
+    .benefit-card { break-inside: avoid; }
+    .step-card { break-inside: avoid; }
+    .persona-card { break-inside: avoid; }
+    .pricing-philosophy { break-inside: avoid; }
+    .group-total { page-break-inside: avoid; }
+    .supp-attachment { page-break-before: always !important; page-break-inside: avoid; }
+    .next-steps-page { page-break-before: always !important; }
+  }
+</style>
+</head>
+<body>
+
+<div id="print-overlay">
+  <button class="print-btn" onclick="window.print()">🖨️ Print</button>
+  <button class="print-btn" id="pdf-btn" onclick="downloadPDF()" style="background:var(--tcf-navy);color:white;border:1px solid var(--tcf-moss);margin-left:8px;">📥 Download PDF</button>
+  <span class="print-status" id="print-status"></span>
+</div>
+
+<div id="report-container"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ─── HTML escape ──────────────────────────────────────────────
+  function esc(str) {
+    if (!str) return '';
+    return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // ─── Cover strip #3 ──────────────────────────────────────────
+  function buildCoverStrip3(planText, aiResult) {
+    if (aiResult && aiResult.summary && aiResult.summary.trim()) {
+      return { heading: 'Implementation Summary', text: aiResult.summary.trim() };
+    }
+    if (!planText || !planText.trim()) {
+      return { heading: 'Tailored Partnership', text: 'A customised implementation plan designed specifically for this group.' };
+    }
+    var firstPara = planText.trim().split(/\n\s*\n/)[0].replace(/\n/g, ' ').trim();
+    var short = firstPara.length > 130 ? firstPara.substring(0, 127) + '...' : firstPara;
+    var lower = planText.toLowerCase();
+    var heading = 'Tailored Rollout';
+    if (lower.indexOf('sample') !== -1 || lower.indexOf('trial') !== -1 || lower.indexOf('menu match') !== -1) heading = 'Menu Match &amp; Trial';
+    else if (lower.indexOf('train') !== -1) heading = 'Training &amp; Onboarding';
+    else if (lower.indexOf('rollout') !== -1) heading = 'Full Rollout Plan';
+    return { heading: heading, text: short };
+  }
+
+  // ─── Site cards ──────────────────────────────────────────────
+  function buildSiteCards(data) {
+    var orgName = data.orgName;
+    var siteMode = data.siteMode;
+    var sites = data.sites;
+    var single = data.single;
+
+    var counts = siteMode === 'single'
+      ? [single.pu4, single.mm5, single.sb6]
+      : sites.reduce(function(acc, s) { return acc.concat([s.pu4, s.mm5, s.sb6]); }, []);
+    var maxCount = Math.max.apply(null, counts.concat([1]));
+
+    function barWidth(count) { return Math.round((count / maxCount) * 100); }
+
+    function cardHTML(name, pu4, mm5, sb6) {
+      var total = pu4 + mm5 + sb6;
+      return '<div class="site-card">' +
+        '<div class="site-card-header">' +
+          '<h4>' + esc(name) + '</h4>' +
+          '<div class="site-total">' + total + ' Texture-Modified Resident' + (total !== 1 ? 's' : '') + '</div>' +
+        '</div>' +
+        '<div class="site-card-body">' +
+          '<div class="texture-row">' +
+            '<span class="texture-label">Soft &amp; Bite-Sized (SB6)</span>' +
+            '<span class="texture-count">' + sb6 + '</span>' +
+          '</div>' +
+          '<div class="texture-bar bar-sb6" style="width:' + barWidth(sb6) + '%"></div>' +
+          '<div class="texture-row">' +
+            '<span class="texture-label">Minced &amp; Moist (MM5)</span>' +
+            '<span class="texture-count">' + mm5 + '</span>' +
+          '</div>' +
+          '<div class="texture-bar bar-mm5" style="width:' + barWidth(mm5) + '%"></div>' +
+          '<div class="texture-row">' +
+            '<span class="texture-label">Pureed (PU4)</span>' +
+            '<span class="texture-count">' + pu4 + '</span>' +
+          '</div>' +
+          '<div class="texture-bar bar-pu4" style="width:' + barWidth(pu4) + '%"></div>' +
+          '<div class="plate-total">~' + (total * 2) + ' plates/day (lunch &amp; dinner)</div>' +
+        '</div>' +
+      '</div>';
+    }
+
+    if (siteMode === 'single') {
+      var t = single.pu4 + single.mm5 + single.sb6;
+      return {
+        cardsHTML: '<div class="site-cards" style="grid-template-columns:1fr; max-width:380px; margin:0 auto;">' + cardHTML(orgName, single.pu4, single.mm5, single.sb6) + '</div>',
+        totalResidents: t,
+        totalPlates: t * 2,
+        subtitleText: 'Texture-modification requirements for ' + esc(orgName) + '.'
+      };
+    }
+
+    var cards = sites.map(function(s) { return cardHTML(s.name, s.pu4, s.mm5, s.sb6); }).join('\n');
+    var cols = Math.min(sites.length, 3);
+    var totalR = sites.reduce(function(a, s) { return a + s.pu4 + s.mm5 + s.sb6; }, 0);
+    return {
+      cardsHTML: '<div class="site-cards" style="grid-template-columns:repeat(' + cols + ',1fr);">' + cards + '</div>',
+      totalResidents: totalR,
+      totalPlates: totalR * 2,
+      subtitleText: 'Resident texture-modification requirements across ' + (sites.length === 1 ? '' : 'the ' + sites.length) + ' ' + esc(orgName) + ' site' + (sites.length !== 1 ? 's' : '') + '.'
+    };
+  }
+
+  // ─── Group total banner ──────────────────────────────────────
+  function buildGroupTotalHTML(totalRes, totalPlates) {
+    return '<div class="group-total">' +
+      '<div><h3>Total Texture-Modified<br>Residents Across Group</h3></div>' +
+      '<div class="big-number">' + totalRes + '</div>' +
+      '<div><h3>Estimated Plates<br>Per Day (Lunch &amp; Dinner)</h3></div>' +
+      '<div class="big-number">' + totalPlates + '</div>' +
+    '</div>';
+  }
+
+  // ─── Section 05 (Implementation Plan) ────────────────────────
+  function buildSection5HTML(planText, orgName, aiResult) {
+    if (!planText || !planText.trim()) {
+      return '<section class="section">' +
+        '<div class="section-header">' +
+          '<div class="section-number">SECTION 05</div>' +
+          '<h2>Implementation Plan</h2>' +
+          '<p>TCF\'s tailored approach for ' + esc(orgName) + '.</p>' +
+        '</div>' +
+        '<div class="pricing-philosophy">' +
+          '<p>Implementation details to be confirmed with ' + esc(orgName) + ' management.</p>' +
+        '</div>' +
+      '</section>';
+    }
+
+    var phases = (aiResult && aiResult.phases) ? aiResult.phases : null;
+    if (phases && Array.isArray(phases) && phases.length > 0) {
+      var completed = phases.filter(function(p) { return p.completed; });
+      var pending = phases.filter(function(p) { return !p.completed; });
+
+      var completedHTML = '';
+      if (completed.length > 0) {
+        completedHTML = '<div class="phase-section">' +
+          '<div class="phase-label completed-label">\u2713 Completed</div>' +
+          completed.map(function(p) {
+            return '<div class="step-card completed">' +
+              '<div class="step-number done">\u2713</div>' +
+              '<div class="step-content">' +
+                '<h4>' + esc(p.title || 'Completed Step') + '</h4>' +
+                '<ul class="step-actions">' + (p.actions || []).map(function(a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul>' +
+              '</div>' +
+              '<div class="step-line"></div>' +
+            '</div>';
+          }).join('\n') +
+        '</div>';
+      }
+
+      var pendingHTML = '';
+      if (pending.length > 0) {
+        var startNum = completed.length + 1;
+        pendingHTML = '<div class="phase-section">' +
+          '<div class="phase-label pending-label">\u25B6 Next Actions</div>' +
+          pending.map(function(phase, i) {
+            var stepNum = startNum + i;
+            return '<div class="step-card">' +
+              '<div class="step-number">' + ('0' + stepNum).slice(-2) + '</div>' +
+              '<div class="step-content">' +
+                '<h4>' + esc(phase.title || 'Step ' + stepNum) + '</h4>' +
+                '<div class="step-timeframe">' + esc(phase.timeframe || '') + '</div>' +
+                '<ul class="step-actions">' + (phase.actions || []).map(function(a) { return '<li>' + esc(a) + '</li>'; }).join('') + '</ul>' +
+                (phase.deliverables ? '<div class="step-deliverable"><strong>Deliverable:</strong> ' + esc(phase.deliverables) + '</div>' : '') +
+              '</div>' +
+              '<div class="step-line"></div>' +
+            '</div>';
+          }).join('\n') +
+        '</div>';
+      }
+
+      return '<section class="section">' +
+        '<div class="section-header">' +
+          '<div class="section-number">SECTION 05</div>' +
+          '<h2>Implementation &amp; Action Plan</h2>' +
+          '<p>TCF\'s menu-matching and implementation strategy for ' + esc(orgName) + '.</p>' +
+        '</div>' +
+        completedHTML + pendingHTML +
+        ((aiResult && aiResult.followUp && aiResult.followUp.trim()) ? '<div class="followup-callout"><strong>\uD83D\uDCCB Follow-up:</strong> ' + esc(aiResult.followUp) + '</div>' : '') +
+      '</section>';
+    }
+
+    var paragraphs = planText.trim().split(/\n\s*\n/).filter(function(p) { return p.trim(); });
+    var rendered = paragraphs.map(function(p, i) {
+      var cleaned = p.trim().replace(/\n/g, '<br>');
+      var labels = ['Phase 1', 'Phase 2', 'Phase 3', 'Phase 4+'];
+      var label = i < labels.length ? labels[i] : 'Phase ' + (i + 1);
+      return '<div class="timeline-item">' +
+        '<h4>' + label + ' — ' + esc(cleaned.split(/[\.\n]/)[0].substring(0, 60)) + '</h4>' +
+        '<p>' + esc(cleaned) + '</p>' +
+      '</div>';
+    }).join('\n');
+
+    return '<section class="section">' +
+      '<div class="section-header">' +
+        '<div class="section-number">SECTION 05</div>' +
+        '<h2>Implementation Plan</h2>' +
+        '<p>TCF\'s tailored approach for ' + esc(orgName) + ' — built around the specific needs and timeline discussed.</p>' +
+      '</div>' +
+      '<div class="timeline">' + rendered + '</div>' +
+    '</section>';
+  }
+
+  // ─── Next steps text ─────────────────────────────────────────
+  function getNextStepsText(aiResult, orgName) {
+    if (aiResult && aiResult.nextSteps && aiResult.nextSteps.trim()) {
+      return aiResult.nextSteps;
+    }
+    return 'We welcome the opportunity to present this proposal to the ' + esc(orgName) + ' team, demonstrate the Menu Builder live, and discuss how TCF can become a trusted long-term partner for your group.';
+  }
+
+  // ─── Supplementary Materials Section ──────────────────────────
+  function buildSuppSection(suppText, attachments) {
+    var hasText = suppText && suppText.trim();
+    var hasAttachments = attachments && attachments.length > 0;
+    if (!hasText && !hasAttachments) return '';
+
+    // Text-only supplementary section (inline, same as before)
+    var textSection = '';
+    if (hasText) {
+      textSection = '<section class="section">' +
+        '<div class="section-header">' +
+          '<div class="section-number">SUPPLEMENTARY</div>' +
+          '<h2>Supplementary Materials</h2>' +
+          '<p>Additional documentation and notes provided with this proposal.</p>' +
+        '</div>' +
+        '<div class="supp-section-content">' + esc(suppText) + '</div>' +
+      '</section>';
+    }
+
+    // Full-page attachment inserts
+    var attachPages = '';
+    if (hasAttachments) {
+      attachPages = attachments.map(function(att) {
+        if (att.type === 'image' && att.data) {
+          return '<div class="supp-attachment">' +
+            '<div class="supp-attachment-watermark"></div>' +
+            '<img src="' + att.data + '" alt="' + esc(att.name) + '">' +
+            '<div class="supp-attachment-label">' + esc(att.name) + '</div>' +
+          '</div>';
+        }
+        if (att.type === 'pdf' && att.data) {
+          return '<div class="supp-pdf-placeholder">' +
+            '<span style="font-size:48px;">\uD83D\uDCC4</span>' +
+            '<div style="font-size:14px;color:var(--tcf-navy);font-weight:700;margin-top:12px;">' + esc(att.name) + '</div>' +
+            '<div style="font-size:11px;color:var(--tcf-slate);margin-top:6px;">PDF document — see attached file</div>' +
+          '</div>';
+        }
+        return '';
+      }).join('\n');
+    }
+
+    return textSection + attachPages;
+  }
+
+  // ─── Build full report HTML ──────────────────────────────────
+  function buildReportHTML(data, aiResult) {
+    var orgName = data.orgName;
+    var siteMode = data.siteMode;
+    var planText = data.planText;
+    var preparedBy = data.preparedBy;
+    var preparedFor = data.preparedFor;
+    var date = data.date;
+    var suppText = data.suppText;
+    var attachments = data.attachments;
+
+    var siteInfo = buildSiteCards(data);
+    var strip3 = buildCoverStrip3(planText, aiResult);
+    var section5 = buildSection5HTML(planText, orgName, aiResult);
+    var nextStepsText = getNextStepsText(aiResult, orgName);
+    var suppSection = buildSuppSection(suppText, attachments);
+
+    var groupTotalHTML = (siteInfo.totalResidents > 0 && siteMode === 'multi')
+      ? buildGroupTotalHTML(siteInfo.totalResidents, siteInfo.totalPlates)
+      : '';
+
+    var html = '<div class="page">\n' +
+
+      '  <!-- COVER -->\n' +
+      '  <section class="cover">\n' +
+      '    <div>\n' +
+      '      <img class="cover-logo-main" src="images/tcf-logo-reversed.png" alt="TCF" onerror="this.src=\'images/tcf_logo.webp\';this.style.width=\'200px\'">\n' +
+      '    </div>\n' +
+      '    <div class="cover-body">\n' +
+      '      <div class="cover-badge">Partnership Proposal</div>\n' +
+      '      <h1>' + esc(orgName) + '</h1>\n' +
+      '      <div class="subtitle">\n' +
+      '        A comprehensive foodservice partnership — delivering quality, consistency, and operational efficiency across your entire group.\n' +
+      '      </div>\n' +
+      '      <div class="date-line">Textured Concept Foods &bull; ' + esc(date) + '</div>\n' +
+      '    </div>\n' +
+      '    <div class="cover-strips-heading">What TCF Is Prepared to Deliver for ' + esc(orgName) + '</div>\n' +
+      '    <div class="cover-strips">\n' +
+      '      <div class="cover-strip">\n' +
+      '        <div class="cs-icon">⚙️</div>\n' +
+      '        <div>\n' +
+      '          <h4>Exclusive Technology</h4>\n' +
+      '          <p>The TCF 4-Week Menu Builder — available only to TCF partners. Automates menu planning, ordering, and compliance.</p>\n' +
+      '        </div>\n' +
+      '      </div>\n' +
+      '      <div class="cover-strip">\n' +
+      '        <div class="cs-icon">🩺</div>\n' +
+      '        <div>\n' +
+      '          <h4>Clinical Leadership</h4>\n' +
+      '          <p>Direct access to Dr. Lisa Sossen (IDDSI Aus &amp; World Board), in-house dietitians, and full kitchen training.</p>\n' +
+      '        </div>\n' +
+      '      </div>\n' +
+      '      <div class="cover-strip">\n' +
+      '        <div class="cs-icon">🤝</div>\n' +
+      '        <div>\n' +
+      '          <h4>' + strip3.heading + '</h4>\n' +
+      '          <p>' + esc(strip3.text) + '</p>\n' +
+      '        </div>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '  </section>\n' +
+      '\n' +
+      '  <!-- SECTION 01: Group Snapshot -->\n' +
+      '  <section class="section">\n' +
+      '    <div class="section-header">\n' +
+      '      <div class="section-number">SECTION 01</div>\n' +
+      '      <h2>' + esc(orgName) + ' Group Snapshot</h2>\n' +
+      '      <p>' + esc(siteInfo.subtitleText) + '</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    ' + siteInfo.cardsHTML + '\n' +
+      '\n' +
+      '    ' + groupTotalHTML + '\n' +
+      '  </section>\n' +
+      '\n' +
+      '  <!-- SECTION 02: Menu Builder -->\n' +
+      '  <section class="section">\n' +
+      '    <div class="section-header">\n' +
+      '      <div class="section-number">SECTION 02</div>\n' +
+      '      <h2>The TCF 4-Week Menu Builder</h2>\n' +
+      '      <p>An exclusive platform — built in-house for TCF customers only. No other supplier can offer this.</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="benefit-grid">\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">📋</div>\n' +
+      '        <h4>Instant Menu Import &amp; Match</h4>\n' +
+      '        <p>Upload existing seasonal menus (PDF, Word, Excel, or photo). System reads and auto-populates a 56-meal, 4-week texture-modified grid — no manual data entry.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🔁</div>\n' +
+      '        <h4>Zero Meal Repetition</h4>\n' +
+      '        <p>56 distinct lunch and dinner slots. No repeats. No meal fatigue. Genuine dietary variety, automatically enforced.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🧮</div>\n' +
+      '        <h4>Automated Order Calculations</h4>\n' +
+      '        <p>Enter headcounts per IDDSI level. System calculates exact packs and cartons — no spreadsheets, no manual maths, no ordering errors.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🔬</div>\n' +
+      '        <h4>Built-in Nutritional Safeguards</h4>\n' +
+      '        <p>Active protein monitoring. If a dinner drops below 25g per serve, the system flags it. Chefs adjust before anything reaches a plate.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🥣</div>\n' +
+      '        <h4>Smart Sauce &amp; Texture Pairing</h4>\n' +
+      '        <p>Automatically matches the correct IDDSI Level 3 sauce to each protein. 100% compliance across PU4, MM5, and SB6 — every time.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">📤</div>\n' +
+      '        <h4>Export &amp; Share Instantly</h4>\n' +
+      '        <p>Kitchen-wall PDF. Distributor-coded order form ready to email. Shareable link for dietitian approval. Seconds, not hours.</p>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div style="margin-top: 12px; background: var(--tcf-light); border-radius: 5px; padding: 8px 14px; text-align: center;">\n' +
+      '      <p style="font-size: 10.5px; color: var(--tcf-navy); font-weight: 500; margin:0;">\n' +
+      '        A task that used to take hours now takes <strong>under 5 minutes</strong>. Exclusive to TCF. Not available to any competitor\'s customers.\n' +
+      '      </p>\n' +
+      '    </div>\n' +
+      '  </section>\n' +
+      '\n' +
+      '  <!-- SECTION 03: Operational Support -->\n' +
+      '  <section class="section">\n' +
+      '    <div class="section-header">\n' +
+      '      <div class="section-number">SECTION 03</div>\n' +
+      '      <h2>Operational Support &amp; Clinical Expertise</h2>\n' +
+      '      <p>Beyond product — TCF provides end-to-end support across every ' + esc(orgName) + ' kitchen.</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="persona-card">\n' +
+      '      <div class="persona-avatar">LS</div>\n' +
+      '      <div class="persona-info">\n' +
+      '        <h3>Dr. Lisa Sossen</h3>\n' +
+      '        <div class="role">Owner &amp; Clinical Director, TCF</div>\n' +
+      '        <p>Dr. Sossen sits on both the <strong>IDDSI Australian Board</strong> and the <strong>IDDSI World Board</strong>, giving ' + esc(orgName) + ' direct access to world-leading expertise in texture-modified food standards. Her team of in-house dietitians and nutritionists provides ongoing clinical governance across all TCF partner sites.</p>\n' +
+      '        <div class="credentials">\n' +
+      '          <span class="cred-badge">IDDSI Aus Board</span>\n' +
+      '          <span class="cred-badge">IDDSI World Board</span>\n' +
+      '          <span class="cred-badge">In-House Dietitians</span>\n' +
+      '          <span class="cred-badge">Nutritionist Support</span>\n' +
+      '        </div>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="benefit-grid" style="margin-top: 12px;">\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">👨‍🍳</div>\n' +
+      '        <h4>Full Kitchen Training</h4>\n' +
+      '        <p>On-site training for every kitchen team — preparation, regeneration, and plating to IDDSI standards.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">📞</div>\n' +
+      '        <h4>Ongoing Dietitian Support</h4>\n' +
+      '        <p>Direct line to TCF\'s clinical team for menu reviews, nutritional assessments, and resident-specific guidance.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">📊</div>\n' +
+      '        <h4>Menu Matching &amp; Nutritionals</h4>\n' +
+      '        <p>TCF matches your existing menu cycle to our range with full nutritional panels and IDDSI compliance documentation.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🔄</div>\n' +
+      '        <h4>Continuous Improvement</h4>\n' +
+      '        <p>Regular menu reviews, seasonal rotations, and product innovation — keeping the offering fresh and compliant.</p>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '  </section>\n' +
+      '\n' +
+      '  <!-- SECTION 04: Pricing -->\n' +
+      '  <section class="section">\n' +
+      '    <div class="section-header">\n' +
+      '      <div class="section-number">SECTION 04</div>\n' +
+      '      <h2>Commercial Terms &amp; Value</h2>\n' +
+      '      <p>A partnership approach to pricing — focused on total cost of ownership, not just unit price.</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="pricing-philosophy">\n' +
+      '      <div class="quote">"What is the true cost of a quality product?"</div>\n' +
+      '      <p>TCF understands that pricing is a key consideration. Rather than competing on unit price alone, we focus on delivering <strong>measurable value</strong> across the entire operation. The real cost equation includes product quality, preparation labour, plate waste, nutritional density, and resident satisfaction — all areas where TCF consistently outperforms.</p>\n' +
+      '      <p style="margin-top:7px;">TCF\'s product range is competitively positioned — <strong>comparable or lower</strong> on many core items versus market alternatives. Where gaps exist, we are <strong>prepared to work with ' + esc(orgName) + '</strong> to structure pricing that makes a full-group partnership viable and compelling for both parties.</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="value-props">\n' +
+      '      <div class="value-prop">\n' +
+      '        <div class="vp-icon">📉</div>\n' +
+      '        <h4>Reduced Waste</h4>\n' +
+      '        <p>Pre-portioned, exact-serve products eliminate over-portioning and plate waste.</p>\n' +
+      '      </div>\n' +
+      '      <div class="value-prop">\n' +
+      '        <div class="vp-icon">⏱️</div>\n' +
+      '        <h4>Labour Savings</h4>\n' +
+      '        <p>Menu Builder automation + ready-to-regenerate meals reduce kitchen labour hours.</p>\n' +
+      '      </div>\n' +
+      '      <div class="value-prop">\n' +
+      '        <div class="vp-icon">🛡️</div>\n' +
+      '        <h4>Compliance Guaranteed</h4>\n' +
+      '        <p>100% IDDSI-aligned products backed by clinical leadership — zero compliance risk.</p>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '  </section>\n' +
+      '\n' +
+      '  ' + section5 + '\n' +
+      '\n' +
+      '  <!-- SECTION 06: Why TCF -->\n' +
+      '  <section class="section">\n' +
+      '    <div class="section-header">\n' +
+      '      <div class="section-number">SECTION 06</div>\n' +
+      '      <h2>Why TCF?</h2>\n' +
+      '      <p>The partnership differentiators that set TCF apart.</p>\n' +
+      '    </div>\n' +
+      '\n' +
+      '    <div class="benefit-grid">\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🏆</div>\n' +
+      '        <h4>IDDSI Board-Level Expertise</h4>\n' +
+      '        <p>Our owner sits on the governing body that defines the standards. No other supplier can offer this level of clinical authority.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">💻</div>\n' +
+      '        <h4>Exclusive Technology</h4>\n' +
+      '        <p>The Menu Builder app is built in-house and available only to TCF customers — not a white-label solution. Purpose-built.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🏭</div>\n' +
+      '        <h4>End-to-End Control</h4>\n' +
+      '        <p>TCF manages product development, manufacturing, clinical compliance, and technology — all in-house. One accountable partner.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🎯</div>\n' +
+      '        <h4>Flexible Partnership</h4>\n' +
+      '        <p>TCF will structure a partnership that works for ' + esc(orgName) + ' — on pricing, menu, rollout, and support. No rigid terms.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">👐</div>\n' +
+      '        <h4>Fresh &amp; Handmade</h4>\n' +
+      '        <p>Every TCF product is handmade in-house using fresh ingredients — not mass-produced. Real food, prepared by chefs.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🏗️</div>\n' +
+      '        <h4>Custom Product Development</h4>\n' +
+      '        <p>TCF will create bespoke meals tailored to needs. If the range doesn\'t cover it, we\'ll build it together.</p>\n' +
+      '      </div>\n' +
+      '      <div class="benefit-card">\n' +
+      '        <div class="benefit-icon">🔍</div>\n' +
+      '        <h4>Kitchen Site Tours</h4>\n' +
+      '        <p>Visit TCF\'s production kitchen. See firsthand how products are made, meet the chefs, and understand the quality.</p>\n' +
+      '      </div>\n' +
+      '    </div>\n' +
+      '  </section>\n' +
+      '\n' +
+      '  ' + suppSection + '\n' +
+      '\n' +
+      '  <!-- NEXT STEPS -->\n' +
+      '  <div class="next-steps-page">\n' +
+      '    <img class="ns-logo" src="images/tcf-logo-reversed.png" alt="TCF" onerror="this.src=\'images/tcf_logo.webp\'">\n' +
+      '    <h2>Next Steps</h2>\n' +
+      '    <div class="ns-divider"></div>\n' +
+      '    <p>' + esc(nextStepsText) + '</p>\n' +
+      '    <div class="ns-contact">\n' +
+      '      <div class="ns-contact-item">TCF — Textured Concept Foods</div>\n' +
+      '      <div class="ns-contact-item">Dr. Lisa Sossen, Clinical Director</div>\n' +
+      '    </div>\n' +
+      '    <div class="ns-attribution">Proposal prepared by ' + esc(preparedBy) + ' for ' + esc(preparedFor) + ' and the team at ' + esc(orgName) + '</div>\n' +
+      '    <div class="ns-footer">Textured Concept Foods &bull; Confidential Partnership Proposal &bull; ' + esc(date) + '</div>\n' +
+      '  </div>\n' +
+      '\n' +
+      '</div>';
+
+    return html;
+  }
+
+  // ─── Parse URL hash ──────────────────────────────────────────
+  function parseHash() {
+    var hash = window.location.hash;
+    if (!hash || hash.length <= 1) return null;
+    try {
+      var json = atob(hash.substring(1));
+      return JSON.parse(json);
+    } catch (e) {
+      console.error('Failed to parse hash payload:', e);
+      return null;
+    }
+  }
+
+  // ─── Build date string ───────────────────────────────────────
+  function currentDate() {
+    var now = new Date();
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    return months[now.getMonth()] + ' ' + now.getFullYear();
+  }
+
+  // ─── Fetch AI plan expansion ─────────────────────────────────
+  function fetchAIExpansion(data) {
+    return new Promise(function(resolve) {
+      if (!data.planText || !data.planText.trim()) {
+        resolve(null);
+        return;
+      }
+
+      var body = JSON.stringify({
+        planText: data.planText,
+        orgName: data.orgName,
+        siteCount: data.siteMode === 'multi' ? (data.sites || []).length : 1,
+        totalResidents: (function() {
+          var info = buildSiteCards(data);
+          return info.totalResidents;
+        })()
+      });
+
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 10000);
+
+      fetch('/api/expand-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: body,
+        signal: controller.signal
+      })
+      .then(function(res) {
+        clearTimeout(timeout);
+        if (!res.ok) {
+          console.warn('AI expand-plan returned status ' + res.status + ', using fallback');
+          return resolve(null);
+        }
+        return res.json();
+      })
+      .then(function(result) {
+        resolve(result || null);
+      })
+      .catch(function(err) {
+        clearTimeout(timeout);
+        console.warn('AI expand-plan fetch failed (' + (err.name || 'error') + '), using fallback:', err.message || err);
+        resolve(null);
+      });
+    });
+  }
+
+  // ─── Main ────────────────────────────────────────────────────
+  async function main() {
+    var container = document.getElementById('report-container');
+    var statusEl = document.getElementById('print-status');
+
+    var payload = parseHash();
+    if (!payload) {
+      container.innerHTML = '<div style="text-align:center;padding:80px 20px;font-family:Roboto,sans-serif;color:#004766;">' +
+        '<h1 style="font-size:24px;margin-bottom:16px;">No report data found</h1>' +
+        '<p style="font-size:14px;color:#3D4A44;">This page requires a base64-encoded JSON payload in the URL hash.</p>' +
+        '</div>';
+      return;
+    }
+
+    var data = {
+      orgName: payload.orgName || 'Unnamed Organisation',
+      siteMode: payload.siteMode || 'single',
+      sites: payload.sites || [],
+      single: payload.single || { pu4: 0, mm5: 0, sb6: 0 },
+      planText: payload.planText || '',
+      preparedBy: payload.preparedBy || '',
+      preparedFor: payload.preparedFor || '',
+      suppText: payload.suppText || '',
+      attachments: payload.attachments || [],
+      date: currentDate()
+    };
+
+    // Update page title
+    document.title = 'TCF \u00d7 ' + data.orgName + ' \u2014 Partnership Proposal';
+
+    // Show loading status
+    statusEl.textContent = 'Building report...';
+
+    // Fetch AI expansion (graceful fallback)
+    var aiResult = null;
+    if (data.planText && data.planText.trim()) {
+      statusEl.textContent = 'Expanding implementation plan...';
+      aiResult = await fetchAIExpansion(data);
+    }
+
+    statusEl.textContent = 'Rendering...';
+
+    // Build and inject report
+    var reportHTML = buildReportHTML(data, aiResult);
+    container.innerHTML = reportHTML;
+
+    // Hide the print overlay status
+    statusEl.textContent = '';
+  }
+
+  // ─── PDF Download ──────────────────────────────────────────
+  window.downloadPDF = function() {
+    var btn = document.getElementById('pdf-btn');
+    var overlay = document.getElementById('print-overlay');
+    btn.textContent = 'Generating...';
+    btn.disabled = true;
+
+    var container = document.getElementById('report-container');
+    var orgName = document.title.replace('TCF \u00d7 ', '').replace(' \u2014 Partnership Proposal', '').replace(/[^a-zA-Z0-9]/g, '-');
+    var now = new Date();
+    var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var dateStr = monthNames[now.getMonth()] + now.getFullYear();
+    var filename = 'TCF-' + orgName + '-Proposal-' + dateStr + '.pdf';
+
+    // CRITICAL: Scroll to top and hide overlay before capture
+    window.scrollTo(0, 0);
+    overlay.style.display = 'none';
+
+    // Small delay to let browser repaint without overlay
+    setTimeout(function() {
+      html2pdf().set({
+        margin: 0,
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: {
+          scale: 2,
+          useCORS: true,
+          logging: false,
+          scrollY: 0,
+          scrollX: 0,
+          windowWidth: 794
+        },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['css', 'legacy'], avoid: '.site-card, .benefit-card, .step-card, .persona-card, .pricing-philosophy, .group-total, .followup-callout, .supp-section-content, .supp-attachment' }
+      }).from(container).save().then(function() {
+        overlay.style.display = '';
+        btn.textContent = '\uD83D\uDCE5 Download PDF';
+        btn.disabled = false;
+      }).catch(function() {
+        overlay.style.display = '';
+        btn.textContent = '\uD83D\uDCE5 Download PDF';
+        btn.disabled = false;
+      });
+    }, 100);
+  };
+
+  // Kick off when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', main);
+  } else {
+    main();
+  }
+
+})();
+</script>
+
+</body>
+</html>
