@@ -1,6 +1,6 @@
 [build]
   command = ""
-  publish = "."
+  publish = ""
 
 [build.environment]
   NODE_VERSION = "18"
@@ -12,5 +12,5 @@
 
 [[redirects]]
   from = "/"
-  to = "/report-generator.html"
+  to = "/landing.html"
   status = 200

@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TCF — Partnership Proposal</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<!-- PDF generation now handled server-side via Netlify Function (Puppeteer) or browser print -->
 <style>
   @page { size: A4; margin: 0; }
 
@@ -28,6 +28,7 @@
     background: white;
     line-height: 1.42;
     font-weight: 400;
+    padding-top: 56px; /* Space for the fixed print overlay in screen mode */
   }
 
   .page { width: 100%; background: white; }
@@ -40,7 +41,6 @@
     border-bottom: 1px solid #E8E6DE;
     width: 210mm;
     margin: 0 auto;
-    page-break-inside: avoid;
     position: relative;
   }
   .section::after {
@@ -727,16 +727,38 @@
   }
 
   @media print {
+    /* ── Hide screen-only UI ── */
     #print-overlay { display: none !important; }
-    .cover { page-break-after: always !important; }
-    .section { page-break-inside: avoid; }
+    body { padding-top: 0 !important; background: white !important; }
+
+    /* ── Page setup ── */
+    @page { size: A4; margin: 0; }
+    html, body { width: 210mm; }
+    #report-container { max-width: none; width: 210mm; margin: 0; }
+
+    /* ── Cover page ── */
+    .cover {
+      page-break-after: always !important;
+      page-break-inside: avoid;
+    }
+
+    /* ── Content sections: allow flow across pages, but keep headers with first content ── */
+    .section-header { break-inside: avoid; break-after: avoid; }
+    .section { border-bottom: none; }
+
+    /* ── Cards and blocks: never split across pages ── */
     .site-card { break-inside: avoid; }
     .benefit-card { break-inside: avoid; }
     .step-card { break-inside: avoid; }
     .persona-card { break-inside: avoid; }
     .pricing-philosophy { break-inside: avoid; }
     .group-total { page-break-inside: avoid; }
+    .followup-callout { break-inside: avoid; }
+    .supp-section-content { break-inside: avoid; }
+
+    /* ── Full-page elements ── */
     .supp-attachment { page-break-before: always !important; page-break-inside: avoid; }
+    .supp-pdf-placeholder { page-break-before: always !important; page-break-inside: avoid; }
     .next-steps-page { page-break-before: always !important; }
   }
 </style>
@@ -744,8 +766,8 @@
 <body>
 
 <div id="print-overlay">
-  <button class="print-btn" onclick="window.print()">🖨️ Print</button>
-  <button class="print-btn" id="pdf-btn" onclick="downloadPDF()" style="background:var(--tcf-navy);color:white;border:1px solid var(--tcf-moss);margin-left:8px;">📥 Download PDF</button>
+  <button class="print-btn" id="pdf-btn" onclick="downloadPDF()" style="background:var(--tcf-navy);color:white;border:1px solid var(--tcf-moss);">📥 Download PDF</button>
+  <button class="print-btn" onclick="window.print()" style="background:transparent;color:white;border:1px solid rgba(255,255,255,0.3);margin-left:8px;font-size:12px;">🖨️ Print</button>
   <span class="print-status" id="print-status"></span>
 </div>
 
@@ -1383,50 +1405,76 @@
     statusEl.textContent = '';
   }
 
-  // ─── PDF Download ──────────────────────────────────────────
-  window.downloadPDF = function() {
+  // ─── PDF Download — Serverless Puppeteer → fallback to browser print ───
+  window.downloadPDF = async function() {
     var btn = document.getElementById('pdf-btn');
-    var overlay = document.getElementById('print-overlay');
-    btn.textContent = 'Generating...';
+    var statusEl = document.getElementById('print-status');
+    var origText = btn.textContent;
+    btn.textContent = '⏳ Generating PDF...';
     btn.disabled = true;
+    statusEl.textContent = '';
 
-    var container = document.getElementById('report-container');
     var orgName = document.title.replace('TCF \u00d7 ', '').replace(' \u2014 Partnership Proposal', '').replace(/[^a-zA-Z0-9]/g, '-');
     var now = new Date();
     var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     var dateStr = monthNames[now.getMonth()] + now.getFullYear();
-    var filename = 'TCF-' + orgName + '-Proposal-' + dateStr + '.pdf';
+    var filename = 'TCF-' + orgName + '-Proposal-' + dateStr;
 
-    // CRITICAL: Scroll to top and hide overlay before capture
-    window.scrollTo(0, 0);
-    overlay.style.display = 'none';
+    // Attempt 1: Netlify serverless function (Puppeteer — best quality)
+    try {
+      statusEl.textContent = 'Rendering with Chrome engine...';
 
-    // Small delay to let browser repaint without overlay
-    setTimeout(function() {
-      html2pdf().set({
-        margin: 0,
-        filename: filename,
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: {
-          scale: 2,
-          useCORS: true,
-          logging: false,
-          scrollY: 0,
-          scrollX: 0,
-          windowWidth: 794
-        },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak: { mode: ['css', 'legacy'], avoid: '.site-card, .benefit-card, .step-card, .persona-card, .pricing-philosophy, .group-total, .followup-callout, .supp-section-content, .supp-attachment' }
-      }).from(container).save().then(function() {
-        overlay.style.display = '';
-        btn.textContent = '\uD83D\uDCE5 Download PDF';
-        btn.disabled = false;
-      }).catch(function() {
-        overlay.style.display = '';
-        btn.textContent = '\uD83D\uDCE5 Download PDF';
-        btn.disabled = false;
+      // Capture the full HTML including styles for server-side rendering
+      var fullHTML = document.documentElement.outerHTML;
+
+      var controller = new AbortController();
+      var timeout = setTimeout(function() { controller.abort(); }, 25000);
+
+      var response = await fetch('/api/generate-pdf', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ html: fullHTML, filename: filename }),
+        signal: controller.signal
       });
-    }, 100);
+
+      clearTimeout(timeout);
+
+      if (!response.ok) {
+        var errData = await response.json().catch(function() { return {}; });
+        throw new Error(errData.error || 'Server returned ' + response.status);
+      }
+
+      // Download the PDF blob
+      var blob = await response.blob();
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename + '.pdf';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function() { URL.revokeObjectURL(url); }, 5000);
+
+      statusEl.textContent = '✅ PDF downloaded';
+      setTimeout(function() { statusEl.textContent = ''; }, 3000);
+      btn.textContent = origText;
+      btn.disabled = false;
+      return;
+
+    } catch (serverErr) {
+      console.warn('Server PDF generation unavailable, falling back to browser print:', serverErr.message);
+    }
+
+    // Attempt 2: Browser print dialog (uses Chrome's native PDF engine — same quality)
+    statusEl.textContent = 'Opening print dialog — choose "Save as PDF"';
+    btn.textContent = origText;
+    btn.disabled = false;
+
+    // Brief delay to let the status message show
+    await new Promise(function(r) { setTimeout(r, 100); });
+    window.print();
+
+    setTimeout(function() { statusEl.textContent = ''; }, 5000);
   };
 
   // Kick off when DOM is ready
