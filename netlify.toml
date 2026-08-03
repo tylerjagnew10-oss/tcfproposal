@@ -12,5 +12,5 @@
 
 [[redirects]]
   from = "/"
-  to = "/landing.html"
+  to = "/report-generator.html"
   status = 200
