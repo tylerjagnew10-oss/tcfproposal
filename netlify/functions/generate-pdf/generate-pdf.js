@@ -4,20 +4,72 @@
 // DocRaptor uses the Prince XML engine (gold standard HTML→PDF).
 // No Puppeteer/Chromium needed — just a lightweight API call.
 //
-// Setup:
-//   1. Sign up at https://docraptor.com (free test mode available)
-//   2. Paste your API key below (replace YOUR_API_KEY_HERE)
-//   3. Deploy to Netlify
-//
 // Accepts JSON body: { html: '<full HTML>', filename: 'name' }
 // Returns: PDF binary (application/pdf)
 
-// ┌─────────────────────────────────────────────────────┐
-// │  PASTE YOUR DOCRAPTOR API KEY BELOW                 │
-// │  Sign up free at: https://docraptor.com             │
-// │  (Test mode generates watermarked PDFs — free)      │
-// └─────────────────────────────────────────────────────┘
 const DOCRAPTOR_API_KEY = '4yy_8MmigknbDVmNmpH6';
+const SITE_URL = 'https://tcfproposals.netlify.app';
+
+// CSS injected into every PDF to fix rendering in Prince XML engine.
+// Key fixes:
+//  - Cover strips: rgba(255,255,255,0.07) is near-invisible on dark bg → boost to 0.15
+//  - PDF/A profile removed (was stripping gradients + transparency)
+//  - CSS bg-image watermarks hidden (often fail in Prince server-side)
+//  - Google Fonts loaded via absolute URL
+const PRINT_FIX_CSS = `
+  <style id="docraptor-fixes">
+    /* Force all backgrounds and colors to print */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+
+    /* Cover page gradient */
+    .cover {
+      background: linear-gradient(135deg, #004766 0%, #001a2e 100%) !important;
+    }
+
+    /* Cover strip boxes — was rgba(255,255,255,0.07) which is near-invisible */
+    .cover-strip {
+      background: rgba(255,255,255,0.15) !important;
+      border: 1px solid rgba(255,255,255,0.25) !important;
+    }
+
+    /* Group total banner */
+    .group-total {
+      background: linear-gradient(135deg, #004766, #002840) !important;
+    }
+
+    /* Site card header */
+    .site-card-header {
+      background: #004766 !important;
+      color: white !important;
+    }
+
+    /* Next steps closing page */
+    .next-steps-page {
+      background: linear-gradient(135deg, #004766 0%, #001a2e 100%) !important;
+    }
+
+    /* Step number circles */
+    .step-number {
+      background: #004766 !important;
+      color: white !important;
+    }
+    .step-number.done {
+      background: #709c59 !important;
+      color: white !important;
+    }
+
+    /* Hide CSS background-image watermarks (Prince can't load relative bg images) */
+    .section::after { display: none !important; }
+    .supp-attachment-watermark { display: none !important; }
+
+    /* Remove overlay UI */
+    #print-overlay { display: none !important; }
+    body { padding-top: 0 !important; }
+  </style>
+`;
 
 exports.handler = async (event) => {
   const corsHeaders = {
@@ -43,7 +95,7 @@ exports.handler = async (event) => {
     return {
       statusCode: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: 'DocRaptor API key not configured — edit generate-pdf.js line 20' }),
+      body: JSON.stringify({ error: 'DocRaptor API key not configured' }),
     };
   }
 
@@ -58,33 +110,27 @@ exports.handler = async (event) => {
       };
     }
 
-    // Resolve relative image paths to absolute Netlify URLs
-    // so DocRaptor can fetch them (it renders server-side)
-    const siteUrl = process.env.URL || 'https://tcfproposals.netlify.app';
     let processedHTML = html;
 
-    // Fix relative image src attributes: src="images/..." → src="https://site/images/..."
+    // 1. Fix relative image src → absolute Netlify URLs (so DocRaptor can fetch them)
     processedHTML = processedHTML.replace(
       /src=["'](?!https?:\/\/|data:)(images\/[^"']+)["']/g,
-      (match, path) => `src="${siteUrl}/${path}"`
+      (match, path) => `src="${SITE_URL}/${path}"`
     );
 
-    // Fix relative CSS url() references: url('images/...') → url('https://site/images/...')
+    // 2. Fix CSS url() with relative paths → absolute
     processedHTML = processedHTML.replace(
       /url\(["']?(?!https?:\/\/|data:)(images\/[^"')]+)["']?\)/g,
-      (match, path) => `url('${siteUrl}/${path}')`
+      (match, path) => `url('${SITE_URL}/${path}')`
     );
 
-    // Remove the print overlay from the PDF output
+    // 3. Inject rendering fix CSS before </head>
+    processedHTML = processedHTML.replace('</head>', PRINT_FIX_CSS + '\n</head>');
+
+    // 4. Remove the print overlay div
     processedHTML = processedHTML.replace(
       /<div id="print-overlay"[\s\S]*?<\/div>/,
       ''
-    );
-
-    // Remove body padding-top (was for the overlay)
-    processedHTML = processedHTML.replace(
-      /padding-top:\s*56px;/g,
-      'padding-top: 0;'
     );
 
     // Call DocRaptor API
@@ -98,13 +144,13 @@ exports.handler = async (event) => {
         type: 'pdf',
         document_content: processedHTML,
         name: filename || 'TCF-Proposal',
-        test: apiKey === 'YOUR_API_KEY_HERE', // Auto-detect test mode
+        test: false,
         prince_options: {
-          media: 'print',        // Use @media print styles
-          baseurl: siteUrl + '/', // Resolve any remaining relative URLs
-          profile: 'PDF/A-1b',  // Archival quality
+          media: 'print',
+          baseurl: SITE_URL + '/',
+          // NOTE: No PDF/A profile — PDF/A strips gradients, opacity, and transparency
         },
-        javascript: false, // HTML is already rendered, no JS needed
+        javascript: false,
       }),
     });
 
@@ -115,12 +161,11 @@ exports.handler = async (event) => {
         statusCode: 502,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          error: `DocRaptor returned ${response.status}: ${errText.substring(0, 200)}`,
+          error: `DocRaptor returned ${response.status}: ${errText.substring(0, 300)}`,
         }),
       };
     }
 
-    // Get PDF buffer
     const pdfBuffer = Buffer.from(await response.arrayBuffer());
     const safeFilename = (filename || 'TCF-Proposal').replace(/[^a-zA-Z0-9_\-\.]/g, '-');
 
