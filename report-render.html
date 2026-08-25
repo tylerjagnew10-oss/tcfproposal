@@ -1291,6 +1291,17 @@
 
   // ─── Parse URL hash ──────────────────────────────────────────
   function parseHash() {
+    // Try sessionStorage first (set by report-generator.html to avoid URL length limits)
+    try {
+      var stored = sessionStorage.getItem('tcf_report_payload');
+      if (stored) {
+        sessionStorage.removeItem('tcf_report_payload'); // one-time read
+        return JSON.parse(stored);
+      }
+    } catch (e) {
+      console.warn('sessionStorage read failed, trying URL hash:', e);
+    }
+    // Fallback: legacy URL hash approach
     var hash = window.location.hash;
     if (!hash || hash.length <= 1) return null;
     try {

@@ -963,11 +963,25 @@
             btnGenerate.classList.add('loading');
             btnGenerate.disabled = true;
 
-            // Encode payload as base64 and open report renderer
+            // Store payload in sessionStorage (avoids URL length limits from base64 attachments)
             var json = JSON.stringify(payload);
-            var encoded = btoa(unescape(encodeURIComponent(json)));
-            var renderUrl = 'report-render.html#' + encoded;
-            window.open(renderUrl, '_blank');
+            try {
+                sessionStorage.setItem('tcf_report_payload', json);
+            } catch (storageErr) {
+                console.warn('sessionStorage failed:', storageErr);
+            }
+
+            // Use a hidden anchor click — browsers treat <a> clicks more permissively
+            // than window.open() for popup-blocker purposes
+            var renderUrl = 'report-render.html';
+            var anchor = document.createElement('a');
+            anchor.href = renderUrl;
+            anchor.target = '_blank';
+            anchor.rel = 'noopener';
+            anchor.style.display = 'none';
+            document.body.appendChild(anchor);
+            anchor.click();
+            document.body.removeChild(anchor);
 
             btnGenerate.classList.remove('loading');
             btnGenerate.disabled = false;
