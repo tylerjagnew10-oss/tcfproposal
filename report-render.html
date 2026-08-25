@@ -1291,15 +1291,15 @@
 
   // ─── Parse URL hash ──────────────────────────────────────────
   function parseHash() {
-    // Try sessionStorage first (set by report-generator.html to avoid URL length limits)
+    // Try localStorage first (set by report-generator.html — shared across tabs)
     try {
-      var stored = sessionStorage.getItem('tcf_report_payload');
+      var stored = localStorage.getItem('tcf_report_payload');
       if (stored) {
-        sessionStorage.removeItem('tcf_report_payload'); // one-time read
+        localStorage.removeItem('tcf_report_payload'); // one-time read, clean up
         return JSON.parse(stored);
       }
     } catch (e) {
-      console.warn('sessionStorage read failed, trying URL hash:', e);
+      console.warn('localStorage read failed, trying URL hash:', e);
     }
     // Fallback: legacy URL hash approach
     var hash = window.location.hash;

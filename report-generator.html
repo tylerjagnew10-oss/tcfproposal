@@ -963,12 +963,12 @@
             btnGenerate.classList.add('loading');
             btnGenerate.disabled = true;
 
-            // Store payload in sessionStorage (avoids URL length limits from base64 attachments)
+            // Store payload in localStorage (shared across tabs — sessionStorage is per-tab)
             var json = JSON.stringify(payload);
             try {
-                sessionStorage.setItem('tcf_report_payload', json);
+                localStorage.setItem('tcf_report_payload', json);
             } catch (storageErr) {
-                console.warn('sessionStorage failed:', storageErr);
+                console.warn('localStorage failed:', storageErr);
             }
 
             // Use a hidden anchor click — browsers treat <a> clicks more permissively
